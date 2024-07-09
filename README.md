@@ -10,4 +10,4 @@ Install on Ubuntu 22 or 24
 	$ ./installer/app-install.sh
 	
 
-Run setup http://domain/admin/setup.php and login with admin@admin.com/1234
+Run setup http://domain.com/admin/setup.php
