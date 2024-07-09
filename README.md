@@ -7,11 +7,11 @@ Transform your qgis2web maps into secure, dyanmic maps.
 
 Features
 - Maps
-	- Connect to PostGIS
+	- Publish using qgis2web plugin
+  	- Connect to PostGIS
 	- Connecto GeoServer
 	- QGIS Print Layouts (or basic Browser Print)
-	- Multi-User Portal
-	- Publish using qgis2web plugin
+	- Advertise WMS, WFS, WMTS, etc...	
 - Users
 	- Users and Groups
 	- Map level permissions
