@@ -4,6 +4,20 @@ Transform your qgis2web maps into secure, dyanmic maps.
 
 ![GeoSync](QuartzMap.png)
 
+
+Features
+- Maps
+	- Connect to PostGIS
+	- Connecto GeoServer
+	- QGIS Print Layouts (or basic Browser Print)
+	- Multi-User Portal
+	- Publish using qgis2web plugin
+- Users
+	- Users and Groups
+	- Map level permissions
+	- Multi-User Portal
+ 	- Optional self-registration
+
 ## Install
 Install on Ubuntu 22 or 24
   
