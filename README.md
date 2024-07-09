@@ -1,5 +1,7 @@
 # QuartzMap
 
+Transform your qgis2web maps into secure, dyanmic maps.
+
 ![GeoSync](QuartzMap.png)
 
 ## Install
