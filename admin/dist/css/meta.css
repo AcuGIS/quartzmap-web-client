@@ -1,0 +1,102 @@
+.table>thead {
+    background-color: #50667f!important;
+    color: #fff;
+     border-style : hidden!important;
+ 
+}
+
+.table thead th {
+    color: #fff!important;
+    font-weight: 900;
+}
+
+.table {
+    width: 80%;
+    max-width: 100%;
+    margin-bottom: 20px;
+ border-collapse:collapse!important;
+  border: none;
+
+}
+
+td {
+ border-style : hidden!important;
+}
+
+.text-end {
+    text-align: center!important;
+}
+
+.nav-tabs {
+    border-bottom: 1px solid #fff;
+    max-width: 90%;
+}
+
+.secrer {
+    display: block;
+    padding-left: 50px;
+}
+
+#main-wrapper[data-layout=horizontal] .left-sidebar[data-sidebarbg=skin6] .sidebar-nav ul, #main-wrapper[data-layout=vertical] .left-sidebar[data-sidebarbg=skin6] .sidebar-nav ul {
+    background: #fff;
+    border-radius:40px;
+    background-image: url("https://demo.qualgis.com/qatmaps3.fw.png");
+}
+
+#main-wrapper[data-layout=horizontal] .left-sidebar[data-sidebarbg=skin6], #main-wrapper[data-layout=vertical] .left-sidebar[data-sidebarbg=skin6] {
+    background: #fff;
+}
+
+.sidebar-nav ul .sidebar-item.selected>.sidebar-link {
+    background-color: #666;
+    color: #fff!important;
+    opacity: 1;
+}
+
+.page-wrapper {
+    background: #efefef;
+    position: relative;
+    background-color: #efefef!important;
+    padding-left:70px!important;
+}
+
+div.dataTables_wrapper div.dataTables_filter {
+    text-align: right;
+    display: none!important;
+}
+
+
+.bg-success {
+    background-color: #41afa5!important;
+}
+
+.bg-warning2 {
+    background-color: cornflowerblue!important;
+}
+
+
+.bg-info {
+    background-color: #50667f!important;
+}
+
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    border: none!important;
+    border-radius: inherit;
+    
+}
+
+
+label {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: 500!important;
+}
+
+.navbar .navbar-dark .bg-dark {background-color: #fff!important;}
