@@ -1,8 +1,10 @@
 # QuartzMap
 
-Transform your qgis2web maps into secure, dyanmic maps.
+![QuartzMap](QuartzMap.png)
 
-![GeoSync](QuartzMap.png)
+## Transform your qgis2web maps into secure, dyanmic maps.
+
+![QuartzMap](QuartzMap-Main.png)
 
 
 Features
