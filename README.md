@@ -24,8 +24,8 @@ Features
 Install on Ubuntu 22 or 24
 
 ```bash
-  
-	$ cd qgis2web_app
+	$ git clone https://github.com/AcuGIS/quartzmap.git
+	$ cd quartzmap
 	$ ./installer/postgres.sh
 	$ ./installer/app-install.sh
 ```
