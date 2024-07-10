@@ -23,7 +23,10 @@ Features
 ## Install
 Install on Ubuntu 22 or 24
 
+Be sure to set the hostname if you plan to provision SSL using certbot.
+
 ```bash
+        $ hostnamectl set-hostname qpod.webgis1.com
 	$ git clone https://github.com/AcuGIS/quartzmap.git
 	$ cd quartzmap
 	$ ./installer/postgres.sh
