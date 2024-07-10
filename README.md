@@ -7,18 +7,22 @@
 ![QuartzMap](QuartzMap-Main.png)
 
 
-Features
-- Maps
-	- Publish using qgis2web plugin
-  	- Connect to PostGIS
-	- Connecto GeoServer
+- QuartzMap Features
+
+	- Publish Using qgis2web Plugin
+	- Private and Public Maps
+	- Connect Layers to PostGIS
+	- Connect Layers to GeoServer
 	- QGIS Print Layouts (or basic Browser Print)
 	- Advertise WMS, WFS, WMTS, etc...	
-- Users
+	- Info Box
+	- Opacity Controls
+	- Customizable Portal
 	- Users and Groups
-	- Map level permissions
+	- Map Level permissions
 	- Multi-User Portal
  	- Optional self-registration
+	- Publish qgis2threejs (Static Only)
 
 ## Install
 Install on Ubuntu 22 or 24
@@ -26,7 +30,7 @@ Install on Ubuntu 22 or 24
 Be sure to set the hostname if you plan to provision SSL using certbot.
 
 ```bash
-        $ hostnamectl set-hostname qpod.webgis1.com
+    $ hostnamectl set-hostname qpod.webgis1.com
 	$ git clone https://github.com/AcuGIS/quartzmap.git
 	$ cd quartzmap
 	$ ./installer/postgres.sh
