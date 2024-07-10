@@ -26,6 +26,10 @@ Install on Ubuntu 22 or 24
 	$ cd qgis2web_app
 	$ ./installer/postgres.sh
 	$ ./installer/app-install.sh
+
+ Optionally, provision and SSL certificate using:
+
+ certbot --apache --agree-tos --email hostmaster@${HNAME} --no-eff-email -d ${HNAME}
 	
 
 Run setup http://domain.com/admin/setup.php
