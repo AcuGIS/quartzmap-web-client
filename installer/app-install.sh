@@ -87,7 +87,7 @@ a2enmod mpm_event
 
 systemctl reload apache2
 
-certbot --apache --agree-tos --email hostmaster@${HNAME} --no-eff-email -d ${HNAME}
+#certbot --apache --agree-tos --email hostmaster@${HNAME} --no-eff-email -d ${HNAME}
 
 sed -i.save '
 s/#DefaultRoot~/DefaultRoot ~/
