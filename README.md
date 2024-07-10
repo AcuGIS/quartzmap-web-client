@@ -22,10 +22,14 @@ Features
 
 ## Install
 Install on Ubuntu 22 or 24
+
+```bash
   
 	$ cd qgis2web_app
 	$ ./installer/postgres.sh
 	$ ./installer/app-install.sh
+```
+
 
  Optionally, provision and SSL certificate using:
 
