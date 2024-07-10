@@ -31,9 +31,8 @@ if(isset($_POST['submit'])){
 		$file_data .= "const APPS_DIR = '".$_POST['apps_dir']."';\n";
 		$file_data .= "const DATA_DIR = '".$_POST['data_dir']."';\n";
 		$file_data .= "const CACHE_DIR = '".$_POST['cache_dir']."';\n";
-		
-		$sent_enabled = isset($_POST['allow_sentinel_layers']) ? 'True' : 'False';
-		$file_data .= "const SENTINEL_LAYERS_ENABLED = ".$sent_enabled.";\n";
+
+		$file_data .= "const SENTINEL_LAYERS_ENABLED = True;\n";
 		
 		foreach($smtp_keys as $k => $t){
 			$file_data .= "const SMTP_".strtoupper($k)." = '".$_POST['smtp_'.$k]."';\n";
@@ -200,10 +199,6 @@ function pwd_vis(pwd_field_id) {
 						<div class="form-group">
 							<input type="checkbox" class="form-checkbox" placeholder="signup allowed" name="allow_signup" value="1"/>
 							<label for="allow_signup">Allow Sign-Up for Admin accounts</label>
-						</div>
-						<div class="form-group">
-							<input type="checkbox" class="form-checkbox" placeholder="sentinel layers allowed" name="allow_sentinel_layers" value="1"/>
-							<label for="allow_sentinel_layers">Allow Sentinel Layers</label>
 						</div>
 					</fieldset>
 				</div>
