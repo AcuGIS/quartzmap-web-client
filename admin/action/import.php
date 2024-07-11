@@ -196,9 +196,14 @@
 		if(isset($_POST['create_link'])){
 			$newConId = -1;
 			$data = ['name' => $dbname.' imported', 'host' => DB_HOST, 'port' => DB_PORT,
-							 'username' => $dbuser, 'password' => $dbpass, 'dbname' => $dbname, 'svc_name' => ''];
+							 'username' => $dbuser, 'password' => $dbpass, 'dbname' => $dbname, 'svc_name' => $dbname.' imported'];
 			$newConId = $obj->create($data);
 			echo '<p><b>Link ID:</b>'.$newConId.'</p>';
+			if($obj->pg_service_ctl('add', $data) == 0){
+				echo '<p><b>SVC Name:</b>'.$data['svc_name'].'</p>';
+			}else{
+				echo '<p><b>SVC Name:</b>Error: Failed to add!</p>';
+			}
 		}
 
 	}else{
