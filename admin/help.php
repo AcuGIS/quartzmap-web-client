@@ -60,14 +60,6 @@ a {
 <h3><a href="https://www.acugis.com/quartzmap/docs/" target="_blank">QuartzMap Documentation</a></h3>
 
 <p>&nbsp;</p>
-
-
-<h3>Support</h3>           
-
-<h3><a href="https://www.acugis.com/members/login" target="_blank">Create Support Ticket</a></h3>
-
-<p>&nbsp;</p>
-
             
 
 <p>&nbsp;</p>
@@ -81,30 +73,15 @@ a {
 <h3><a href="https://youtu.be/_AwP-EAJFFA" target="_blank"><img src="assets/images/video.png"> Data Source Quick Start</a></h3>
 
 
+<p>&nbsp;</p>
+
+
+<h3><a href="https://youtu.be/Oh_P013VO6U" target="_blank"><img src="assets/images/video.png"> Data Source Quick Start II</a></h3>
+
+
+
 
 <a>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
             </div>
