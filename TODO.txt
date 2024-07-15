@@ -1,8 +1,0 @@
-0. Oracle ?
-2. wms proxy caching ?
-5. merge pg/gs_cache in ds_cache ?
-6. Return to Links is white and invisible
-
-7. add sentinel _to layer to control and opacity control
-8. session times out unexpectedly ?				
-10. fix link text color on Q3D pdf
