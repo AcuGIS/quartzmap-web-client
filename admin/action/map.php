@@ -22,7 +22,7 @@ function unzip_me($zipname){
 	return $ext_dir;
 }
 
-function zip2html_dir($upload, $upload_dir){
+function zip2html_dir($upload){
 
 	$unzip_dir = unzip_me($upload["tmp_name"]);
 	$name = basename($upload["name"]);
@@ -30,8 +30,7 @@ function zip2html_dir($upload, $upload_dir){
 	
 	
 	if(is_file($unzip_dir.'/index.html')){
-		$html_dir = $upload_dir.'/'.$name;
-		rename($unzip_dir, $html_dir);
+		$html_dir = $unzip_dir;
 	}else if(is_file($unzip_dir.'/'.$name.'/index.html')){
 		$html_dir = $unzip_dir.'/'.$name;
 	}else{
@@ -96,7 +95,7 @@ function zip2html_dir($upload, $upload_dir){
 								if(isset($_POST['app'])){
 									$html_dir = $upload_dir.'/'.$_POST['app'];
 								}else if(!empty($_FILES["archive"]["tmp_name"])){	// if we have uploaded file
-									$html_dir = zip2html_dir($_FILES["archive"], $upload_dir);
+									$html_dir = zip2html_dir($_FILES["archive"]);
 								}
 								
 								if($html_dir){
