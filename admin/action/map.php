@@ -6,10 +6,9 @@
 		require('../class/app.php');
 		
 function unzip_me($zipname){
-	$ext_dir = '/tmp/uploads';
-	if(!is_dir($ext_dir)){
-		mkdir($ext_dir);
-	}
+	$ext_dir = tempnam('/tmp', 'upload');
+	unlink($ext_dir);
+	mkdir($ext_dir);
 
 	$zip = new ZipArchive;
 	$res = $zip->open($zipname);
@@ -22,12 +21,7 @@ function unzip_me($zipname){
 	return $ext_dir;
 }
 
-function zip2html_dir($upload){
-
-	$unzip_dir = unzip_me($upload["tmp_name"]);
-	$name = basename($upload["name"]);
-	$name = explode('.', $name)[0];
-	
+function find_html_dir($unzip_dir, $name){
 	
 	if(is_file($unzip_dir.'/index.html')){
 		$html_dir = $unzip_dir;
@@ -95,7 +89,12 @@ function zip2html_dir($upload){
 								if(isset($_POST['app'])){
 									$html_dir = $upload_dir.'/'.$_POST['app'];
 								}else if(!empty($_FILES["archive"]["tmp_name"])){	// if we have uploaded file
-									$html_dir = zip2html_dir($_FILES["archive"]);
+									
+									$unzip_dir = unzip_me($_FILES["archive"]["tmp_name"]);
+									$name = basename($_FILES["archive"]["name"]);
+									$name = explode('.', $name)[0];
+									
+									$html_dir = find_html_dir($unzip_dir, $name);
 								}
 								
 								if($html_dir){
