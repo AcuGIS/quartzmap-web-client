@@ -1,5 +1,7 @@
 # QuartzMap Web Client 2.1.0
 
+[![Documentation Status](https://readthedocs.org/projects/quartzmap/badge/?version=latest)](https://quartzmap.docs.acugis.com/en/latest/?badge=latest)
+
 ![QuartzMap](QuartzMap.png)
 
 ## Transform your qgis2web maps into secure, dyanmic maps.
