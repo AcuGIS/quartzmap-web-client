@@ -1,4 +1,4 @@
-# QuartzMap
+# QuartzMap Web Client 2.1.0
 
 ![QuartzMap](QuartzMap.png)
 
