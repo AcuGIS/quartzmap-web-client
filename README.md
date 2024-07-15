@@ -29,14 +29,15 @@
 ## Install
 Install on Ubuntu 22 or 24
 
-Be sure to set the hostname if you plan to provision SSL using certbot.
+Be sure to set the hostname prior to installation if you plan to provision SSL using certbot.
+
+hostnamectl set-hostname qpod.webgis1.com
 
 ```bash
-    $ hostnamectl set-hostname qpod.webgis1.com
-	$ git clone https://github.com/AcuGIS/quartzmap.git
-	$ cd quartzmap
-	$ ./installer/postgres.sh
-	$ ./installer/app-install.sh
+$ git clone https://github.com/AcuGIS/quartzmap-web-client.git
+$ cd quartzmap-web-client
+$ ./installer/postgres.sh
+$ ./installer/app-install.sh
 ```
 
 
@@ -44,5 +45,6 @@ Be sure to set the hostname if you plan to provision SSL using certbot.
 
  certbot --apache --agree-tos --email hostmaster@${HNAME} --no-eff-email -d ${HNAME}
 	
+## Documentation
 
-Run setup http://domain.com/admin/setup.php
+QuartMap Web Client [Documentation](https://quartzmap.docs.acugis.com).
