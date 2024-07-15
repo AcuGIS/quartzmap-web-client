@@ -569,6 +569,7 @@ class App {
 	public static function installAppQ3D($newId, $details, $html_dir, $data_dir, $apps_dir){
 		$layer_names = array();
 		$sentinel_ids = array();
+		$scene_ext = 'json';
 		
 		// move html dir to apps
 		App::copy_r($html_dir, $apps_dir.'/'.$newId);
@@ -608,7 +609,7 @@ class App {
 
 			}else if(preg_match('/app.loadSceneFile\(".\/data\/(.*)",/', $line, $matches)){
 				$json_filename = $matches[1];
-				
+				$scene_ext = str_ends_with($json_filename, '.js') ? 'js' : 'json';
 				$vars = [ 'DATA_FILE' => '../../../data/'.$newId.'/'. $json_filename ];
 				App::update_template('../snippets/data_file.php', $html_dir.'/data_file'.$di.'.php', $vars);
 				
@@ -667,7 +668,7 @@ class App {
 		$fp = fopen($html_dir.'/Qgis2threejs.js', "w");
 		foreach($lines as $line){
 			if(str_contains($line, 'if (ext == "json") app.loadJSONFile(url, onload);')){
-				$line = str_replace('if (ext == "json") app.loadJSONFile(url, onload);', 'if (ext == "php") app.loadJSONFile(url, onload);', $line);
+				$line = str_replace('if (ext == "json") app.loadJSONFile(url, onload);', 'ext = "'.$scene_ext.'"; if (ext == "php") app.loadJSONFile(url, onload);', $line);
 			}else if(str_contains($line, 'var saveCanvasImage = saveImageFunc || function (canvas) {')){
 				$line = $line.'if(as_pdf){
             var imgData = canvas.toDataURL(\'image/jpeg\');
