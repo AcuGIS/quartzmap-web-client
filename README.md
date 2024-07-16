@@ -34,17 +34,25 @@ Be sure to set the hostname prior to installation if you plan to provision SSL u
 hostnamectl set-hostname qpod.webgis1.com
 
 ```bash
-$ git clone https://github.com/AcuGIS/quartzmap-web-client.git
-$ cd quartzmap-web-client
+$ unzip -q quartzmap-web-client-2.1.0.zip
+$ cd quartzmap-web-client-2.1.0
 $ ./installer/postgres.sh
 $ ./installer/app-install.sh
 ```
 
+Optionally, provision and SSL certificate using:
 
- Optionally, provision and SSL certificate using:
-
+```bash
  certbot --apache --agree-tos --email hostmaster@${HNAME} --no-eff-email -d ${HNAME}
-	
+```
+
+Note: If using git clone, you will need to make postgres.sh and app-install.sh executable:
+
+```bash
+chmod +x installer/postgres.sh
+chmod +x installer/app-install.sh
+```
+ 
 ## Documentation
 
 QuartMap Web Client [Documentation](https://quartzmap.docs.acugis.com).
