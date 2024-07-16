@@ -56,3 +56,11 @@ chmod +x installer/app-install.sh
 ## Documentation
 
 QuartMap Web Client [Documentation](https://quartzmap.docs.acugis.com).
+
+
+## License
+Version: MPL 2.0
+
+The contents of this file are subject to the Mozilla Public License Version 2.0 (the "License"); you may not use this file except in compliance with the License. 
+
+You may obtain a copy of the License at http://www.mozilla.org/MPL/
