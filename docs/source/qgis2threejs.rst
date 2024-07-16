@@ -20,9 +20,13 @@ Publishing
 
 2. Export your map to a location on your desktop as normal
 
-3. FTP the map using FTP or use the "Upload" function to upload.
+3. Be sure to select "Enable the Viewer to run locally"
 
-4. Go to Maps > Add New
+   .. image:: images/threejslocal.png
+
+4. FTP the map using FTP or use the "Upload" function to upload.
+
+5. Go to Maps > Add New
 
 Give your map a name and description.
 
@@ -31,4 +35,19 @@ Select the qgis2threejs map you wish to publish.
 Your qgis2threejs map is now published
 
   .. image:: images/threejs-map-print.jpg
-   
+
+
+Control Options
+------------------------
+
+qgis2threejs offers two options for map controls.
+
+Selecting "3D Viewer with data-gui panel" will produces the controls shown below:
+
+  .. image:: images/threejs-right.png
+
+Selecting "3D Viewer" will produces the controls shown below:
+
+ .. image:: images/threejs-left.png
+
+
