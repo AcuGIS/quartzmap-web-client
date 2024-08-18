@@ -195,8 +195,8 @@
 
 		if(isset($_POST['create_link'])){
 			$newConId = -1;
-			$data = ['name' => $dbname.' imported', 'host' => DB_HOST, 'port' => DB_PORT,
-							 'username' => $dbuser, 'password' => $dbpass, 'dbname' => $dbname, 'svc_name' => $dbname.' imported'];
+			$data = ['name' => $dbname, 'host' => DB_HOST, 'port' => DB_PORT,
+							 'username' => $dbuser, 'password' => $dbpass, 'dbname' => $dbname, 'svc_name' => $dbname];
 			$newConId = $obj->create($data);
 			echo '<p><b>Link ID:</b>'.$newConId.'</p>';
 			if($obj->pg_service_ctl('add', $data) == 0){
