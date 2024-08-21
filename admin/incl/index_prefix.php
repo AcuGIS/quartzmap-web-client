@@ -8,9 +8,19 @@ require('env.php');
 $loc = null;
 $permalink = '';
 
-if(IS_PUBLIC){
-	// skip all security checks
-}else if(isset($_GET['permalink'])){
+if(!IS_PUBLIC){
+	if(!isset($_SESSION[SESS_USR_KEY])) {
+	  header('Location: ../../login.php');
+	  exit;
+	}
+	
+	$database = new Database(DB_HOST, DB_NAME, DB_USER, DB_PASS, DB_PORT, DB_SCMA);
+	if(!$database->check_user_map_access(MAP_ID, $_SESSION[SESS_USR_KEY]->id)){
+		die('Sorry, access not allowed!');
+	}
+}
+
+if(isset($_GET['permalink'])){
 	
 	$permalink = '?permalink='.$_GET['permalink'];
 	
@@ -32,16 +42,5 @@ if(IS_PUBLIC){
 	}
 	
 	$loc = explode('/', $row['query']);	// 11/41.8036/-87.6407
-}else{
-	
-	if(!isset($_SESSION[SESS_USR_KEY])) {
-	  header('Location: ../../login.php');
-	  exit;
-	}
-	
-	$database = new Database(DB_HOST, DB_NAME, DB_USER, DB_PASS, DB_PORT, DB_SCMA);
-	if(!$database->check_user_map_access(MAP_ID, $_SESSION[SESS_USR_KEY]->id)){
-		die('Sorry, access not allowed!');
-	}
 }
 ?>
