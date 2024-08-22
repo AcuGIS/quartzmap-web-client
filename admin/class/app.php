@@ -604,8 +604,8 @@ class App {
 				$line = $str."\n".$line;
 				
 			} else if(preg_match('/src="images\//', $line, $matches)){
-				$line = str_replace('images/', 'data_img.php?img=', $line);
-				copy('../snippets/data_img.php', $html_dir.'/data_img.php');
+				$line = str_replace('images/', 'data_filep.php?f=', $line);
+				copy('../snippets/data_filep.php', $html_dir.'/data_filep.php');
 
 			}else if(preg_match('/app.loadSceneFile\(".\/data\/(.*)",/', $line, $matches)){
 				$json_filename = $matches[1];
@@ -743,8 +743,8 @@ class App {
 				array_push($layer_names, $matches[1]);
 			
 			}else if(preg_match('/src="images\//', $line, $matches)){
-				$line = str_replace('images/', 'data_img.php?img=', $line);
-				copy('../snippets/data_img.php', $html_dir.'/data_img.php');
+				$line = str_replace('images/', 'data_filep.php?f=', $line);
+				copy('../snippets/data_filep.php', $html_dir.'/data_filep.php');
 				
 			}else if(preg_match('/src="data\/(.*)"/', $line, $matches)){
 				$json_filename = $matches[1];
