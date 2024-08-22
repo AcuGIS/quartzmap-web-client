@@ -604,7 +604,7 @@ class App {
 				$line = $str."\n".$line;
 				
 			} else if(preg_match('/src="images\//', $line, $matches)){
-				$line = str_replace('images/', 'data_filep.php?f=', $line);
+				$line = str_replace('images/', 'data_filep.php?f=images/', $line);
 				copy('../snippets/data_filep.php', $html_dir.'/data_filep.php');
 
 			}else if(preg_match('/app.loadSceneFile\(".\/data\/(.*)",/', $line, $matches)){
@@ -743,7 +743,7 @@ class App {
 				array_push($layer_names, $matches[1]);
 			
 			}else if(preg_match('/src="images\//', $line, $matches)){
-				$line = str_replace('images/', 'data_filep.php?f=', $line);
+				$line = str_replace('images/', 'data_filep.php?f=images/', $line);
 				copy('../snippets/data_filep.php', $html_dir.'/data_filep.php');
 				
 			}else if(preg_match('/src="data\/(.*)"/', $line, $matches)){
