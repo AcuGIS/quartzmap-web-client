@@ -31,21 +31,4 @@ $(document).ready(function() {
 		$('#infobox_modal').modal('show');
 	});
 
-	$(document).on("click", "#view_features", function() {
-		var obj = $(this);
-		var data = {'features': true, 'id': obj.attr('data-id'), 'from_map': true}
-		$.ajax({
-				type: "POST",
-				url: '../../admin/action/features.php<?=$permalink?>',
-				data: data,
-				dataType:"json",
-				success: function(response){
-					if(response.success){
-						$('#qgis-modal-body').html(response.html);
-						$('#qgis_modal').modal('show');
-					}
-				}
-		});
-	});
-	
 });

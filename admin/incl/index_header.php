@@ -48,6 +48,41 @@ var rightSentinels = [];
 
 	if(!empty(QGIS_LAYOUT)) { ?>
 	<link rel="stylesheet" href="../../assets/dist/locationfilter/locationfilter.css">
+	<script>
+$(document).ready(function() {
+	$(document).on("click", "#view_features", function() {
+		var obj = $(this);
+		var data = {'features': true, 'id': obj.attr('data-id'), 'from_map': true}
+		$.ajax({
+				type: "POST",
+				url: '../../admin/action/features.php<?=$permalink?>',
+				data: data,
+				dataType:"json",
+				success: function(response){
+					if(response.success){
+						$('#qgis-modal-body').html(response.html);
+						$('#qgis_modal').modal('show');
+					}
+				}
+		});
+	});
+});
+	</script>
+	
+	<div id="qgis_modal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<p>QGIS Metadata</p>
+				</div>
+				
+				<div class="modal-body" id="qgis-modal-body"><p>QGIS Metadata</p></div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	<?php } ?>
 
 <div id="loading">
@@ -57,17 +92,3 @@ var rightSentinels = [];
 	<link rel="stylesheet" href="../../assets/dist/css/maps.css?<?=filemtime('../../assets/dist/css/maps.css')?>">
 	<link rel="stylesheet" href="thismap.css?<?=filemtime('thismap.css')?>">
 
-<div id="qgis_modal" class="modal fade" role="dialog">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<p>QGIS Metadata</p>
-			</div>
-			
-			<div class="modal-body" id="qgis-modal-body"><p>QGIS Metadata</p></div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-			</div>
-		</div>
-	</div>
-</div>
