@@ -39,7 +39,7 @@ function find_html_dir($unzip_dir, $name){
     if(isset($_SESSION[SESS_USR_KEY]) && $_SESSION[SESS_USR_KEY]->accesslevel == 'Admin') {
 			$database = new Database(DB_HOST, DB_NAME, DB_USER, DB_PASS, DB_PORT, DB_SCMA);
     	$obj			= new map_Class($database->getConn(), $_SESSION[SESS_USR_KEY]->id);
-			$id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+			$id 			= empty($_POST['id']) ? 0 : intval($_POST['id']);
 			
 				if(($id > 0) && !$obj->isOwnedByUs($id)){
 					$result = ['success' => false, 'message' => 'Action not allowed!'];
@@ -189,11 +189,11 @@ function find_html_dir($unzip_dir, $name){
 					if(count($ref_ids) > 0){
 						$result = ['success' => false, 'message' => 'Error: Can\'t delete because map has '.count($ref_ids).' '.$ref_name.' with ID(s) ' . implode(',', array_unique($ref_ids)) . '!' ];
 					}else {
-						$result = $obj->getById($_POST['id']);
+						$result = $obj->getById($id);
 						$row = pg_fetch_assoc($result);
 						pg_free_result($result);
 						
-						if($obj->delete(intval($_POST['id']))){
+						if($obj->delete(intval($id))){
 							
 							App::uninstallApp($row['id'], DATA_DIR, APPS_DIR);
 							
@@ -204,7 +204,7 @@ function find_html_dir($unzip_dir, $name){
 					}
         
 				} else if(isset($_POST['clear'])) {
-					$map_cache_dir = CACHE_DIR.'/'.$_POST['id'];
+					$map_cache_dir = CACHE_DIR.'/'.$id;
 					
 					if(is_dir($map_cache_dir)){
 						$dir_size = 0;

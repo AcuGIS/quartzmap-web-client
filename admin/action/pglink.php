@@ -9,7 +9,7 @@
     if(isset($_SESSION[SESS_USR_KEY]) && $_SESSION[SESS_USR_KEY]->accesslevel == 'Admin') {
 				$database = new Database(DB_HOST, DB_NAME, DB_USER, DB_PASS, DB_PORT, DB_SCMA);
 				$obj = new pglink_Class($database->getConn(), $_SESSION[SESS_USR_KEY]->id);
-				$id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+				$id = empty($_POST['id']) ? 0 : intval($_POST['id']);
 			
 				if(($id > 0) && !$obj->isOwnedByUs($id)){
 					$result = ['success' => false, 'message' => 'Action not allowed!'];

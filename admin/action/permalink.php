@@ -11,7 +11,7 @@
 			
 			$database = new Database(DB_HOST, DB_NAME, DB_USER, DB_PASS, DB_PORT, DB_SCMA);
 			$obj			= new permalink_Class($database->getConn(), $_SESSION[SESS_USR_KEY]->id);
-			$id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+			$id 			= 0;
 			
 			if($_SERVER['REQUEST_METHOD'] == 'GET'){	// if called from map directly
 				// make a 1 visit permalink, expiring in 1 hour
@@ -27,6 +27,8 @@
 				$_POST['visits_limit'] = 1;
 				$_POST['expires'] = "1 hour";
 				$_POST['save'] = true;
+			}else{
+				$id = empty($_POST['id']) ? 0 : intval($_POST['id']);
 			}
 			
 				if(($id > 0) && !$obj->isOwnedByUs($id)){
@@ -35,7 +37,7 @@
 				}else if(isset($_POST['save'])) {
           $newId = 0;
 
-          if(isset($_POST['id'])) { // update
+          if($id > 0) { // update
             if($obj->update($_POST)){
 							$result = ['success' => true, 'message' => 'Permalink Successfully Updated!'];
 						}else{
@@ -67,7 +69,7 @@
 
           
       } else if(isset($_POST['delete'])) {
-				if($obj->delete(intval($_POST['id']))){
+				if($obj->delete($id)){
 					$result = ['success' => true, 'message' => 'Data Successfully Deleted!'];
 				}else{
 					$result = ['success' => false, 'message' => 'Error: Data Not Deleted!'];

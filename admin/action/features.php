@@ -9,7 +9,7 @@
 		
     $result = ['success' => false, 'message' => 'Error while processing your request!'];
 		
-		$id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+		$id = empty($_POST['id']) ? 0 : intval($_POST['id']);
 		
 		if(isset($_GET['permalink'])){
 
