@@ -91,7 +91,7 @@ systemctl reload apache2
 
 sed -i.save '
 s/#DefaultRoot~/DefaultRoot ~/
-s/# RequireValidShelloff/RequireValidShell off/' /etc/proftpd/proftpd.conf
+s/# RequireValidShell\s*off/RequireValidShell off/' /etc/proftpd/proftpd.conf
 systemctl enable proftpd
 systemctl restart proftpd
 
