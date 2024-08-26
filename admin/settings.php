@@ -30,7 +30,7 @@
     <div id="main-wrapper" data-layout="vertical" data-navbarbg="skin5" data-sidebartype="full"
         data-sidebar-position="absolute" data-header-position="absolute" data-boxed-layout="full">
 
-        <?php define('MENU_SEL', 'registration.php');
+        <?php define('MENU_SEL', 'settings.php');
 					include("incl/topbar.php");
 					include("incl/sidebar.php");
 				?>
