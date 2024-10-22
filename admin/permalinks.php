@@ -122,6 +122,20 @@ td {
     background: transparent !important; }
 </style>
 <script type="text/javascript">
+
+function reload_select(name, arr, val_sel){
+	var obj = $('#' + name);
+	obj.empty();
+	
+	let sel = val_sel == '0';
+	//obj.append($('<option>',{text: 'Select', value: '0', selected: sel}));
+	$.each(arr, function(x){
+		sel = val_sel == arr[x];
+		obj.append($('<option>',{text: arr[x], value: arr[x], selected: sel}));
+	});
+	obj.change();
+}
+
 	$(document).ready(function() {
 				$('[data-toggle="tooltip"]').tooltip();
 				
@@ -159,10 +173,17 @@ td {
 										if($(this).attr('data-name') == 'map_id') {
 											row += `
 													<td data-type="select" data-value="0">
-															<select name="`+$(this).attr('data-name')+`">
+															<select id="`+$(this).attr('data-name')+`" name="`+$(this).attr('data-name')+`">
 																	<?PHP foreach($maps as $k => $v) { ?>
 																	<option value="<?=$k?>"><?=$v['name']?></option>
 																	<?PHP } ?>
+															</select>
+													</td>
+											`;
+									}else if($(this).attr('data-name') == 'page') {
+											row += `
+													<td data-type="select" data-value="0">
+															<select id="`+$(this).attr('data-name')+`" name="`+$(this).attr('data-name')+`">
 															</select>
 													</td>
 											`;
@@ -178,6 +199,8 @@ td {
 					$("table").append(row);
 					$("table tbody tr").eq(index + 1).find(".add, .edit").toggle();
 					$('[data-toggle="tooltip"]').tooltip();
+					
+					$('#map_id').change();	// force reload of pages select
 				});
 
 
@@ -239,7 +262,36 @@ td {
 					}
 				});
 
+				$(document).on("change", '#map_id', function() {
+					let obj = $(this);
+					let data = {
+						'id' 			: obj.find('option:selected').val(),
+						'pages' : true
+					};
+					
+					let page = $('#page');
 
+					page.val("0");	page.attr('disabled', 'disabled');
+					
+					if(data.id != "0"){
+						$.ajax({
+							type: "POST",
+							url: 'action/map.php',
+							async: false,	// we need false, to set selected in .edit event
+							data: data,
+							dataType:"json",
+							success: function(response){
+								 if(response.success) {
+									 page.removeAttr('disabled');
+									 reload_select('page', response.pages, "0");
+								 }else{
+									 alert('Error: Failed to list pages. ' + response.message);
+								 }
+							},
+							fail: function(){	alert('Error: POST failure');	}
+						});
+					}
+				});
 
 				// Edit row on edit button click
 				$(document).on("click", ".edit", function() {
@@ -253,12 +305,15 @@ td {
 										if($(this).closest('table').find('thead tr th').eq(k).attr('data-type') == 'select') {
 											if(name == 'map_id') {
 												$(this).html(`
-														<select name="`+name+`" multiple>
+														<select id="`+name+`" name="`+name+`">
 																		<?PHP foreach($maps as $k => $v) { ?>
 																		<option value="<?=$k?>"><?=$v['name']?></option>
 																		<?PHP } ?>
 																</select>
 														`);
+											}else if(name == 'page') {
+												$(this).html(`<select id="`+name+`" name="`+name+`"></select>`);
+												$('#map_id').change();	// force reload of pages select
 											}
 
 											var val = $(this).attr('data-value').split(',');
@@ -354,6 +409,7 @@ td {
 				<tr>
 					<th data-name="id" data-editable='false'>ID</th>
 					<th data-name="map_id" data-type="select">Map</th>
+					<th data-name="page" data-type="select">Page</th>
 					<th data-name="description">Description</th>
 					<th data-name="query">Query</th>
 					
@@ -371,6 +427,7 @@ td {
 			<tbody> <?php while($row = pg_fetch_object($conn_rows)): ?> <tr data-id="<?=$row->id?>" align="left">
 					<td><?=$row->id?></td>
 					<td data-type="select" data-value="<?=$row->map_id?>"><?=$maps[$row->map_id]['name']?></td>
+					<td data-type="select" data-value="<?=$row->page?>"><?=$row->page?></td>
 					<td><?=$row->description?></td>
 					<td><?=str_replace('&', '</br>', urldecode($row->query))?></td>
 					<td><?=$row->created?></td>	
@@ -378,7 +435,7 @@ td {
 					<td><?=$row->visits?></td>
 					<td><?=$row->visits_limit?></td>
 					<td>
-							<a href="../apps/<?=$row->map_id?>/index.php?permalink=<?=$row->hash?>"><?=$row->hash?></a>
+							<a href="../apps/<?=$row->map_id?>/<?=$row->page?>?permalink=<?=$row->hash?>"><?=$row->hash?></a>
 					</td>
 					
 					<td>

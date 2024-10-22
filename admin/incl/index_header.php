@@ -16,10 +16,14 @@
 			if(isset($_SESSION[SESS_USR_KEY])){
 						if($_SESSION[SESS_USR_KEY]->accesslevel == 'Admin') { ?>
 			<a href="../../admin/index.php" target="_self" style="text-decoration:none; color: #fff!important; font-size: 1.25rem; font-weight: 300;">Administration</a>
+			<?php if(!empty(QGIS_LAYOUT)) { ?>
 			<a href="javascript:void(0);" target="_self" id="view_features"	data-id="<?=MAP_ID?>"	style="text-decoration:none; color: #fff!important; font-size: 1.25rem; font-weight: 300;">View Metadata</a>
+			<?php } ?>
       <a href="../../logout.php" target="_self" style="text-decoration:none; color: #fff!important; font-size: 1.25rem; font-weight: 300;">Log Out</a>
 			<?php } else { ?>
+			<?php if(!empty(QGIS_LAYOUT)) { ?>
 			<a href="javascript:void(0);" target="_self" id="view_features"	data-id="<?=MAP_ID?>"	style="text-decoration:none; color: #fff!important; font-size: 1.25rem; font-weight: 300;">View Metadata</a>
+			<?php } ?>
 			<a href="../../index.php" target="_self" style="text-decoration:none; color: #fff!important; font-size: 1.25rem; font-weight: 300;">Back to Dashboard</a>
 			<?php }
 			} ?>
@@ -29,6 +33,8 @@
 
 <link  href="../../assets/dist/css/loading_modal.css" rel="stylesheet">
 <script src="../../assets/dist/js/loading_modal.js"></script>
+<link rel="stylesheet" href="../../assets/dist/css/maps.css?<?=filemtime('../../assets/dist/css/maps.css')?>">
+<link rel="stylesheet" href="thismap.css?<?=filemtime('thismap.css')?>">
 
 <script>
 <?php if(HAS_SENTINEL) { ?>
@@ -46,8 +52,9 @@ var rightSentinels = [];
 	<script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap4.min.js"></script>
 <?php }
 
-	if(!empty(QGIS_LAYOUT)) { ?>
+if(!empty(QGIS_LAYOUT)) { ?>
 	<link rel="stylesheet" href="../../assets/dist/locationfilter/locationfilter.css">
+	
 	<script>
 $(document).ready(function() {
 	$(document).on("click", "#view_features", function() {
@@ -83,12 +90,8 @@ $(document).ready(function() {
 			</div>
 		</div>
 	</div>
-	<?php } ?>
+<?php } ?>
 
 <div id="loading">
 	<img id="loading-image" src="../../assets/images/ajax-loader.gif" alt="Loading..." />
 </div>
-	
-	<link rel="stylesheet" href="../../assets/dist/css/maps.css?<?=filemtime('../../assets/dist/css/maps.css')?>">
-	<link rel="stylesheet" href="thismap.css?<?=filemtime('thismap.css')?>">
-

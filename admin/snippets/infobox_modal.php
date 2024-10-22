@@ -5,7 +5,7 @@
 				<p>Information</p>
 			</div>
 			
-			<div class="modal-body" id="info-modal-body"><?php readfile('infobox.html'); ?></div>
+			<div class="modal-body" id="info-modal-body"><?php readfile(DATA_DIR.'/'.MAP_ID.'/infobox.html'); ?></div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 			</div>

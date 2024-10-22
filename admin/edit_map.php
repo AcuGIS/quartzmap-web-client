@@ -7,6 +7,7 @@
 		require('class/pglink.php');
 		require('class/gslink.php');
 		require('class/access_groups.php');
+		require('class/cron.php');
 
 		if(!isset($_SESSION[SESS_USR_KEY]) || $_SESSION[SESS_USR_KEY]->accesslevel != 'Admin'){
         header('Location: ../login.php');
@@ -25,6 +26,9 @@
 		$qgis_layouts = array();
 		$qgis_layout = null;
 		$map_type = APP_TYPE_NONE;
+		$r_files = array(1);
+		$rmd_files = array();
+		$cron = ['cron_period' => 'never', 'cron_custom' => '*/30 * * * *'];
 		
 		if(!empty($_GET['id'])){
 			$map_obj = new map_Class($database->getConn(), $_SESSION[SESS_USR_KEY]->id);
@@ -40,17 +44,21 @@
 			$map_acc_grps = $map_obj->getAccessGroups($_GET['id']);
 			$map_acc_ids  = array_keys($map_acc_grps);
 			
-			list($dss,$lys, $ses, $use_dt,$is_public,$qgis_layout, $map_type) = App::parseIndex(APPS_DIR.'/'.$map['id']);
-			$qgis_filename = App::parseQGIS(APPS_DIR.'/'.$map['id']);
-			if($qgis_filename){
-				$qgis_layouts = App::parseQGISLayouts(DATA_DIR.'/'.$map['id'].'/'.$qgis_filename);
-			}
+			$cron = CRON::get($_GET['id']);
+			list($dss,$lys, $ses, $use_dt,$is_public,$qgis_layout, $map_type) = parseIndex(APPS_DIR.'/'.$map['id'], DATA_DIR.'/'.$map['id']);
 			
-			$pgobj = new pglink_Class($database->getConn(), $_SESSION[SESS_USR_KEY]->id);
-			$pglinks = $pgobj->getArr();
-			
-			$gsobj = new gslink_Class($database->getConn(), $_SESSION[SESS_USR_KEY]->id);
-			$gslinks = $gsobj->getArr();
+			if($map_type != APP_TYPE_R){
+				$qgis_filename = App::parseQGIS(APPS_DIR.'/'.$map['id']);
+				if($qgis_filename){
+					$qgis_layouts = App::parseQGISLayouts(DATA_DIR.'/'.$map['id'].'/'.$qgis_filename);
+				}
+				
+				$pgobj = new pglink_Class($database->getConn(), $_SESSION[SESS_USR_KEY]->id);
+				$pglinks = $pgobj->getArr();
+				
+				$gsobj = new gslink_Class($database->getConn(), $_SESSION[SESS_USR_KEY]->id);
+				$gslinks = $gsobj->getArr();
+}			
 			
 		}else{
 			$upload_dir = App::upload_dir($_SESSION[SESS_USR_KEY]->ftp_user);
@@ -125,7 +133,19 @@
 				<?php }
 					}
 				} ?>
+
+				//$('#map_source_r').hide();
+				$('#app').hide();
 				$('#archive').hide();
+				
+				$('#r_output').hide();
+			});
+
+			// Codemirror doesn't refresh on accordion open, so we do it here!
+			$(document).on("click", ".accordion-plus-toggle", function() {
+				let id = $(this).data('parent').match(/\d+/)[0];
+				let edX = window['editor' + id];
+				edX.refresh();
 			});
 		</script>
 
@@ -206,12 +226,16 @@ border-radius:9px;border:1px solid #AAAAAA;
 										<legend>Source</legend>	
 										<div class="form-group">
 											
-											<input type="radio" id="from_uploaded" name="from_type" value="uploaded" checked>
+											<input type="radio" id="from_code" name="from_type" value="code" checked>
+											<label for="from_code">Code</label>
+											<input type="radio" id="from_uploaded" name="from_type" value="uploaded">
 											<label for="from_uploaded">Uploads</label>
 											<input type="radio" id="from_zip" name="from_type" value="archive">
 											<label for="from_zip">Archive</label>
 											
-											<select class="form-control" name="app" id="app" aria-label="Select app">
+											<textarea name="map_source_r0" id="map_source_r0" rows="10" cols="80"><?php if(isset($_GET['id']) && is_file(DATA_DIR.'/'.$_GET['id'].'/index.R')) { readfile(APPS_DIR.'/'.$_GET['id'].'/index.R'); }else{ ?>Enter R code for map.<?php } ?></textarea>
+											
+											<select class="form-control" name="app" id="app" aria-label="Select app" disabled>
 												<?php foreach($app_names as $k){ ?>
 													<option <?php if($k == $map['name']){ ?> selected <?php }?> value="<?=$k?>"><?=$k?></option>
 											<?php	} ?>
@@ -222,13 +246,71 @@ border-radius:9px;border:1px solid #AAAAAA;
 										</div>
 									</fieldset>
 								<?php }else {
+									
+									if($map_type == APP_TYPE_R) {
+										$r_files = App::getRfiles(DATA_DIR.'/'.$_GET['id']);
+										$rmd_files = App::getFilesByType(APPS_DIR.'/'.$_GET['id'], 'Rmd');
+									?>
+									<input type="hidden" id="from_code" name="from_type" value="code">
+									
+									<fieldset>
+										<legend>Source</legend>	
+										
+										<?php for($i=0; $i < count($r_files); $i++){ ?>
+											
+											<div class="panel-group" id="accordion<?=$i?>" role="tablist" aria-multiselectable="false">
+											   <div class="panel panel-default">
+											      <div class="panel-heading" role="tab" id="heading<?=$i?>">
+											         <h5 class="panel-title">
+											            <a role="button" data-toggle="collapse" class="accordion-plus-toggle collapsed" data-parent="#accordion<?=$i?>" href="#collapse<?=$i?>" aria-expanded="false" aria-controls="collapse<?=$i?>"><?=$r_files[$i]?></a>
+											         </h5>
+											      </div>
+											      <div id="collapse<?=$i?>" class="panel-collapse collapse" role="tabpanel" style="padding: 12px;" aria-labelledby="heading<?=$i?>">
+															<textarea name="map_source_r<?=$i?>" id="map_source_r<?=$i?>" rows="10" cols="80"><?php if(isset($_GET['id']) && is_file(DATA_DIR.'/'.$_GET['id'].'/'.$r_files[$i])) { readfile(DATA_DIR.'/'.$_GET['id'].'/'.$r_files[$i]); }else{ ?>Enter R code for map.<?php } ?></textarea>
+														</div>
+												</div>
+											</div>
+										
+									<?php } ?>
+
+										<?php for($j=0, $i=count($r_files); $j < count($rmd_files); $j++, $i++){ ?>
+									
+										<div class="panel-group" id="accordion<?=$i?>" role="tablist" aria-multiselectable="false">
+											 <div class="panel panel-default">
+													<div class="panel-heading" role="tab" id="heading<?=$i?>">
+														 <h5 class="panel-title">
+																<a role="button" data-toggle="collapse" class="accordion-plus-toggle collapsed" data-parent="#accordion<?=$i?>" href="#collapse<?=$i?>" aria-expanded="false" aria-controls="collapse<?=$i?>"><?=$rmd_files[$j]?></a>
+														 </h5>
+													</div>
+													<div id="collapse<?=$i?>" class="panel-collapse collapse" role="tabpanel" style="padding: 12px;" aria-labelledby="heading<?=$i?>">
+														<textarea name="map_source_rmd<?=$j?>" id="map_source_rmd<?=$j?>" rows="10" cols="80"><?php if(isset($_GET['id']) && is_file(APPS_DIR.'/'.$_GET['id'].'/'.$rmd_files[$j])) { readfile(APPS_DIR.'/'.$_GET['id'].'/'.$rmd_files[$j]); }else{ ?>Enter Rmd code for map.<?php } ?></textarea>
+													</div>
+											</div>
+										</div>
+									
+								<?php } ?>
+									</fieldset>
+								<?php }
+								
 									$aci = 0;
 								?>
 
 								<fieldset>
 									<legend>Data</legend>									
-									<?php
-										foreach($dss as $dsi => $ds) { ?>
+									
+									<?php if($map_type == APP_TYPE_R) { ?>
+									<div class="form-group">
+										<label for="cron_period" class="form-label">Update:</label>
+										<select class="form-control" name="cron_period" id="cron_period" aria-label="Select cron period">
+										<?php foreach(CRON_PERIOD as $period) { ?>
+											<option <?php if($cron['cron_period'] == $period){?> selected <?php }?> value="<?=$period?>"><?=$period?></option>
+										<?php	} ?>
+										</select>
+										<input type="text" class="form-control" name="cron_custom" id="cron_custom" <?php if($cron['cron_period'] != 'custom'){?> style="display: none;" <?php } ?> value="<?=$cron['cron_custom']?>" />
+									</div>
+								<?php } ?>
+										
+									<?php foreach($dss as $dsi => $ds) { ?>
 					<div class="panel-group" id="accordion<?=$aci?>" role="tablist" aria-multiselectable="false">
 					   <div class="panel panel-default">
 					      <div class="panel-heading" role="tab" id="heading<?=$aci?>">
@@ -474,8 +556,9 @@ border-radius:9px;border:1px solid #AAAAAA;
 								</fieldset>
 								
 								
-							<?php } ?>
-
+							<?php }
+								
+							if($map_type != APP_TYPE_R) { ?>
 									<fieldset>
 										<legend>QGIS</legend>	
 										<div class="form-group">
@@ -499,6 +582,7 @@ border-radius:9px;border:1px solid #AAAAAA;
 											<input type="file" class="form-control" name="qgis_file[]" id="qgis_file" value="" accept=".qgs,.gpkg" multiple/>
 										</div>
 									</fieldset>
+								<?php } ?>
 								
 									<fieldset>
 										<legend>View</legend>
@@ -507,11 +591,13 @@ border-radius:9px;border:1px solid #AAAAAA;
 											<label for="thismap_css" class="form-label">Map CSS</label>
 											<textarea name="thismap_css" id="thismap_css" rows="10" cols="80"><?php if(!empty($_GET['id'])){ readfile(APPS_DIR.'/'.$_GET['id'].'/thismap.css'); }else { ?>/* map specific CSS */<?php } ?></textarea>
 										</div>
-
+										
+									<?php if($map_type != APP_TYPE_R) { ?>
 										<div class="form-group">
 											<input type="checkbox" class="form-checkbox" name="use_datatable" id="use_datatable" value="1" <?php if($use_dt == 1) {?> checked <?php } ?> <?php if(($use_dt == -1) || ($map_type == APP_TYPE_Q3D)) {?> disabled <?php } ?>/>
 											<label for="use_datatable" class="form-label">Show DataTable below map</label>
 										</div>
+									<?php } ?>
 										
 										<div class="form-group">
 											<label for="image" class="form-label">Thumbnail Image (.png, .jpeg formats)</label>
@@ -526,7 +612,7 @@ border-radius:9px;border:1px solid #AAAAAA;
 										
 										<div class="form-group">
 											<label for="infobox_content" class="form-label">Info box</label>
-											<textarea name="infobox_content" id="infobox_content" rows="10" cols="80" <?php if($map_type == APP_TYPE_Q3D){ ?>disabled<?php } ?>><?php if(isset($_GET['id']) && is_file(APPS_DIR.'/'.$_GET['id'].'/infobox.html')) { readfile(APPS_DIR.'/'.$_GET['id'].'/infobox.html'); }else{ ?>Enter information to be displayed, when your map Info button is clicked.<?php } ?></textarea>
+											<textarea name="infobox_content" id="infobox_content" rows="10" cols="80" <?php if($map_type == APP_TYPE_Q3D){ ?>disabled<?php } ?>><?php if(isset($_GET['id']) && is_file(DATA_DIR.'/'.$_GET['id'].'/infobox.html')) { readfile(DATA_DIR.'/'.$_GET['id'].'/infobox.html'); }else{ ?>Enter information to be displayed, when your map Info button is clicked.<?php } ?></textarea>
 										</div>
 								</fieldset>
 										
@@ -549,6 +635,9 @@ border-radius:9px;border:1px solid #AAAAAA;
 									
 									<button type="submit" class="btn btn-primary" id="btn_submit"><?php if(isset($_GET['id'])){ ?>Update<?php } else { ?>Create<?php } ?></button>
 						</form>
+						
+						<pre id='r_output'></pre>
+						
 					</div>
           </div>
             
@@ -558,12 +647,24 @@ border-radius:9px;border:1px solid #AAAAAA;
     
     <script src="dist/js/sidebarmenu.js"></script>
     <script src="dist/js/custom.js"></script>
-		<script type="module" src="dist/js/chkeditor.mjs"></script>
+		<script type="module" src="dist/js/ckeditor.js"></script>
 
 		<script>
-			var editor1 = CodeMirror.fromTextArea(document.getElementById("thismap_css"), {
+			var editor_css = CodeMirror.fromTextArea(document.getElementById("thismap_css"), {
 				extraKeys: {"Ctrl-Space": "autocomplete"}
 			});
+			
+			<?php for($i=0; $i < count($r_files); $i++){ ?>
+				var editor<?=$i?> = CodeMirror.fromTextArea(document.getElementById("map_source_r<?=$i?>"), {
+					extraKeys: {"Ctrl-Space": "autocomplete"}
+				});
+			<?php } ?>
+			
+			<?php for($j=0, $i=count($r_files); $j < count($rmd_files); $j++, $i++){ ?>
+				var editor<?=$i?> = CodeMirror.fromTextArea(document.getElementById("map_source_rmd<?=$j?>"), {
+					extraKeys: {"Ctrl-Space": "autocomplete"}
+				});
+			<?php } ?>
 		</script>
 </body>
 

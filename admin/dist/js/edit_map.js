@@ -41,12 +41,20 @@ $(document).ready(function() {
 	});
 
 	$(document).on("click", 'input[name="from_type"]', function() {
-		if($(this).attr('id') == 'from_uploaded'){
-			$('#app').show();    $('#app').prop('disabled', false);			$('#app').prop('required',true);
-			$('#archive').hide();$('#archive').prop('disabled', true);		$('#archive').prop('required',false);
+		let cm_r = editor0.getWrapperElement();
+		
+		if($(this).attr('id') == 'from_code'){
+			$(cm_r).show();    						$(cm_r).prop('disabled', false);				$(cm_r).prop('required',true);
+			$('#app').hide();    					$('#app').prop('disabled', true);				$('#app').prop('required',false);
+			$('#archive').hide();					$('#archive').prop('disabled', true);		$('#archive').prop('required',false);
+		}else if($(this).attr('id') == 'from_uploaded'){
+			$('#app').show();    					$('#app').prop('disabled', false);			$('#app').prop('required',true);
+			$(cm_r).hide();    						$(cm_r).prop('disabled', true);					$(cm_r).prop('required',false);
+			$('#archive').hide();					$('#archive').prop('disabled', true);		$('#archive').prop('required',false);
 		}else{
-			$('#app').hide();			$('#app').prop('disabled', true);					$('#app').prop('required',false);
-			$('#archive').show(); $('#archive').prop('disabled', false);		$('#archive').prop('required',true);
+			$(cm_r).hide();    						$(cm_r).prop('disabled', true);					$(cm_r).prop('required',false);
+			$('#app').hide();							$('#app').prop('disabled', true);				$('#app').prop('required',false);
+			$('#archive').show(); 				$('#archive').prop('disabled', false);	$('#archive').prop('required',true);
 		}
 	});
 
@@ -211,6 +219,16 @@ $(document).ready(function() {
 		}
 	});
 
+	$(document).on("change", "#cron_period", function() {
+		var cron_period = $(this).find('option:selected').text();
+		
+		if(cron_period == 'custom'){
+			$('#cron_custom').show();
+		}else{
+			$('#cron_custom').hide();
+		}
+	});
+
 	$(document).on("change", '.gslink_id', function() {
 		let obj = $(this);
 		let dsi = obj.attr('id').match(/\d+/)[0];
@@ -297,8 +315,35 @@ $(document).ready(function() {
 			}else{
 				let form_data = new FormData($('#map_form')[0]);
 				
+				form_data.delete('infobox_content');
 				form_data.append('infobox_content', infoEditor.getData());
-				form_data.append('thismap_css', editor1.getValue());
+				
+				form_data.delete('thismap_css');
+				form_data.append('thismap_css', editor_css.getValue());
+				
+				const rmd_count = $('[id^=map_source_rmd]').length;
+				const r_count = $('[id^=map_source_r]').length - rmd_count;
+				
+				for(i=0; i < r_count; i++){
+					form_data.delete('map_source_r' + i);
+					if(form_data.get('from_type') == 'code'){
+						let editor_name = 'editor' + i;
+						let editorX = window[editor_name];
+						form_data.append('map_source_r' + i, editorX.getValue());
+					}
+				}
+				
+				
+				for(i=0; i < rmd_count; i++){
+					form_data.delete('map_source_rmd' + i);
+					if(form_data.get('from_type') == 'code'){
+						let editor_name = 'editor' + (r_count + i);
+						let editorX = window[editor_name];
+						form_data.append('map_source_rmd' + i, editorX.getValue());
+					}
+				}
+
+				$('#btn_submit').prop('disabled', true);
 
 					$.ajax({
 						type: "POST",
@@ -315,6 +360,12 @@ $(document).ready(function() {
 								 }else{
 									 window.location.href = 'edit_map.php?id=' + response.id;
 								 }
+							 }else{
+								$('#btn_submit').prop('disabled', false);
+								if(r_count > 0){
+									$('#r_output').show();
+		 						  $('#r_output').html(response.r_out + response.r_err);
+								}
 							 }
 						 }
 					});

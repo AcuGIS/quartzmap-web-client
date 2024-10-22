@@ -19,9 +19,11 @@
 					$row = $obj->getMap($_GET['permalink']);
 					$_POST['map_id'] = $row['map_id'];
 					$_POST['query'] = str_replace('permalink='.$_GET['permalink'].'&', '', $_SERVER['QUERY_STRING']);
+					$_POST['page'] = $row['page'];
 				}else{
 					$_POST['map_id'] = $_GET['id'];
 					$_POST['query'] = $_GET['loc'];
+					$_POST['page'] = $_GET['page'];
 				}
 				$_POST['description'] = 'Permalink for map '.$_POST['map_id'];
 				$_POST['visits_limit'] = 1;
@@ -57,7 +59,7 @@
 						list($newId,$created,$expires) = $obj->create($_POST);
 						if($newId > 0){
 
-							$perma_url = 'apps/'. $_POST['map_id'].'/index.php?permalink='.$_POST['hash'];
+							$perma_url = 'apps/'. $_POST['map_id'].'/'.$_POST['page'].'?permalink='.$_POST['hash'];
 							
 							$result = ['success' => true, 'message' => 'Data Successfully Saved!',
 								'id' => $newId, 'hash' => $_POST['hash'], 'url'=> $perma_url,'created'=>$created, 'expires'=>$expires ];

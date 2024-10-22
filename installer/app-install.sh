@@ -63,8 +63,17 @@ fi
 
 # 1. Install packages (assume PG is preinstalled)
 apt-get -y install apache2 php-{pgsql,zip,gd,simplexml,curl,fpm} \
-	proftpd libapache2-mod-fcgid postfix python3-certbot-apache gdal-bin
-install_qgis_server
+	proftpd libapache2-mod-fcgid postfix python3-certbot-apache gdal-bin \
+	r-base r-base-dev r-cran-{raster,htmlwidgets,plotly,rnaturalearthdata,rjson,skimr} \
+	texlive-latex-base texlive-latex-recommended texlive-xetex cron
+
+apt-get install --no-install-suggests --no-install-recommends texlive-latex-extra
+	install_qgis_server
+
+	# compile leaflet package from CRAN
+	R --no-save <<R_EOF
+install.packages( c('leaflet', 'leaflet.extras', 'rpostgis', 'R3port', 'rnaturalearth'))
+R_EOF
 
 # setup apache
 a2enmod ssl headers expires fcgid cgi
@@ -106,8 +115,10 @@ CMD_EOF
 echo "${APP_DB} pass: ${APP_DB_PASS}" >> /root/auth.txt
 
 mkdir -p "${APPS_DIR}"
+mkdir -p "${APPS_DIR}/js"
+mkdir -p "${APPS_DIR}/css"
 mkdir -p "${CACHE_DIR}"
-mkdir -p "${DATA_DIR}"
+mkdir -p "${DATA_DIR}/qgis"
 
 chown -R www-data:www-data "${APPS_DIR}"
 chown -R www-data:www-data "${CACHE_DIR}"
@@ -142,12 +153,22 @@ systemctl restart apache2
 groupadd qatusers
 
 # install ftp user creation script
-for f in create_ftp_user delete_ftp_user update_ftp_user; do
+for f in create_ftp_user delete_ftp_user update_ftp_user quartz_crontab; do
 	cp installer/${f}.sh /usr/local/bin/
 	chown www-data:www-data /usr/local/bin/${f}.sh
 	chmod 0550 /usr/local/bin/${f}.sh
 done
 
 cat >/etc/sudoers.d/q2w <<CAT_EOF
-www-data ALL = NOPASSWD: /usr/local/bin/create_ftp_user.sh, /usr/local/bin/delete_ftp_user.sh, /usr/local/bin/update_ftp_user.sh
+www-data ALL = NOPASSWD: /usr/local/bin/create_ftp_user.sh, /usr/local/bin/delete_ftp_user.sh, /usr/local/bin/update_ftp_user.sh, /usr/local/bin/quartz_crontab.sh
 CAT_EOF
+
+# add quartz user for cron updates
+useradd -s /usr/sbin/nologin -M -d /var/www -G www-data quartz
+
+# create empty cron file
+touch "$DATA_DIR/quartz.crontab"
+chown www-data:www-data "$DATA_DIR/quartz.crontab"
+
+# save 1Gb of space
+apt-get clean all

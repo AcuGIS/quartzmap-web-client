@@ -67,6 +67,7 @@ CREATE TABLE public.map_access ( id SERIAL PRIMARY KEY,
 
 CREATE TABLE public.permalink (	id SERIAL PRIMARY KEY,
 		description character varying(255),
+		page character varying(255),
 		query character varying(255),
     map_id integer NOT NULL		REFERENCES public.map(id),
 		created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

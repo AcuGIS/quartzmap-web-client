@@ -3,12 +3,16 @@
 		require('../incl/const.php');
     require('../class/database.php');
     require('../class/map.php');
+		require('../class/cron.php');	// used in app.php below
 		require('../class/app.php');
 		
 function unzip_me($zipname){
 	$ext_dir = tempnam('/tmp', 'upload');
 	unlink($ext_dir);
 	mkdir($ext_dir);
+	if(!is_dir($ext_dir)){
+		return null;
+	}
 
 	$zip = new ZipArchive;
 	$res = $zip->open($zipname);
@@ -16,19 +20,18 @@ function unzip_me($zipname){
 		$zip->extractTo($ext_dir);
 		$zip->close();
 	} else {
-		echo 'Error: Failed to open'.$zipname;
+		return null;
 	}
 	return $ext_dir;
 }
 
-function find_html_dir($unzip_dir, $name){
+function find_html_dir($unzip_dir, $name, $ext){
 	
-	if(is_file($unzip_dir.'/index.html')){
+	if(is_file($unzip_dir.'/index.'.$ext)){
 		$html_dir = $unzip_dir;
-	}else if(is_file($unzip_dir.'/'.$name.'/index.html')){
+	}else if(is_file($unzip_dir.'/'.$name.'/index.'.$ext)){
 		$html_dir = $unzip_dir.'/'.$name;
 	}else{
-		echo 'Error: index.html not found';
 		$html_dir = null;
 	}
 	return $html_dir;
@@ -52,8 +55,30 @@ function find_html_dir($unzip_dir, $name){
 							$newId = $obj->update($_POST) ? $id : 0;
 							if($newId > 0){
 								$html_dir = APPS_DIR.'/'.$newId;
+								$data_dir = DATA_DIR.'/'.$newId;
 								
+								if(isset($_POST['map_source_0'])){
+									$r_files = App::getRfiles(DATA_DIR.'/'.$newId);
+									for($i=0; $i < count($r_files); $i++){
+										$dst = $data_dir.'/'.$r_files[$i];
+										# overwrite source files, if missing or changed
+										if(!is_file($dst) || (sha1($_POST['map_source_r'.$i]) != sha1_file($dst)) ){
+											file_put_contents($dst, $_POST['map_source_r'.$i]);
+										}
+									}
+								}
 								
+								if(isset($_POST['map_source_rmd0'])){
+								$rmd_files = App::getFilesByType($html_dir, 'Rmd');
+								for($i=0; $i < count($rmd_files); $i++){
+									$dst = $html_dir.'/'.$rmd_files[$i];
+									# overwrite source files, if missing or changed
+									if(!is_file($dst) || (sha1($_POST['map_source_rmd'.$i]) != sha1_file($dst)) ){
+										file_put_contents($dst, $_POST['map_source_rmd'.$i]);
+									}
+								}
+								}
+
 								if(!empty($_POST['qgis_remove'])){
 									unlink($html_dir.'/proxy_qgis.php');
 									unlink(DATA_DIR.'/'.$newId.'/'.$_POST['qgis_remove']);
@@ -70,10 +95,13 @@ function find_html_dir($unzip_dir, $name){
 									}
 									unset($_POST['qgis_layout']);
 								}
-								App::updateIndex($_POST, $html_dir, DATA_DIR, APPS_DIR);
+
+								updateIndex($_POST, $html_dir, $data_dir);
 							}
 							
-            } else if(!empty($_POST['app']) || !empty($_FILES['archive'])){ // insert
+            } else if(!empty($_POST['map_source_r0']) ||
+											!empty($_POST['app']) ||
+											!empty($_FILES['archive'])	){ // insert
 
               $newId = $obj->create($_POST);
 							
@@ -85,26 +113,54 @@ function find_html_dir($unzip_dir, $name){
 								$upload_dir = App::upload_dir($_SESSION[SESS_USR_KEY]->ftp_user);
 								$html_dir = null;
 								$unzip_dir = null;
-								// html dir can be in /var/www/upload or in /tmp, if its an upload
-								if(isset($_POST['app'])){
+								
+								if(isset($_POST['map_source_r0'])){
+									$unzip_dir = tempnam('/tmp', 'upload');
+									unlink($unzip_dir);
+									mkdir($unzip_dir);
+									
+									# check if $_POST['map_source_r0'] is Rmd
+									if(AppR::is_rmd_source($_POST['map_source_r0'])){
+										file_put_contents($unzip_dir.'/index.Rmd', $_POST['map_source_r0']);
+										#add index.R template with all formats
+										$_POST['map_source_r0'] = file_get_contents('../snippets/rmd_index.R');
+									}
+									file_put_contents($unzip_dir.'/index.R', $_POST['map_source_r0']);
+									$html_dir = $unzip_dir;
+									
+								}else if(isset($_POST['app'])){
+									// html dir can be in /var/www/upload or in /tmp, if its an upload
 									$html_dir = $upload_dir.'/'.$_POST['app'];
 								}else if(!empty($_FILES["archive"]["tmp_name"])){	// if we have uploaded file
 									
 									$unzip_dir = unzip_me($_FILES["archive"]["tmp_name"]);
-									$name = basename($_FILES["archive"]["name"]);
-									$name = explode('.', $name)[0];
-									
-									$html_dir = find_html_dir($unzip_dir, $name);
+									if($unzip_dir == null){
+										$result = ['success' => false, 'message' => 'Error: Failed to unzip!'];
+									}else{
+										
+										$name = basename($_FILES["archive"]["name"]);
+										$name = explode('.', $name)[0];
+
+										$html_dir = find_html_dir($unzip_dir, $name, 'R');
+										if($html_dir == null){
+											$html_dir = find_html_dir($unzip_dir, $name, 'html');
+										}
+									}
 								}
 								
 								if($html_dir){
-									App::installApp($newId, $_POST, $html_dir, DATA_DIR, APPS_DIR);	// process map data files
+									$rv = installApp($newId, $_POST, $html_dir, DATA_DIR, APPS_DIR);	// process map data files
+									if(isset($rv['r_err'])){
+										$result = ['success' => false, 'message' => 'Failed to compile '.$rv['r_file'], 'r_out' => $rv['r_out'], 'r_err' => $rv['r_err']];
+									}
+									
 									if($unzip_dir){
 										App::rrmdir($unzip_dir);
 									}
 								}else{
 									$obj->delete($newId);
 									$newId = 0;
+									$result = ['success' => false, 'message' => 'Error: $html_dir not found!'];
 								}
 							}
             }
@@ -163,7 +219,9 @@ function find_html_dir($unzip_dir, $name){
 								file_put_contents($html_dir.'/thismap.css', $_POST['thismap_css']);
 							}
 							
-							$result = ['success' => true, 'message' => 'Map successfully created!', 'id' => $newId];
+							if(!isset($result['r_err'])){
+								$result = ['success' => true, 'message' => 'Map successfully created!', 'id' => $newId];
+							}
 						}else{
 							$result = ['success' => false, 'message' => 'Failed to save Map!'];
 						}
@@ -189,13 +247,18 @@ function find_html_dir($unzip_dir, $name){
 					if(count($ref_ids) > 0){
 						$result = ['success' => false, 'message' => 'Error: Can\'t delete because map has '.count($ref_ids).' '.$ref_name.' with ID(s) ' . implode(',', array_unique($ref_ids)) . '!' ];
 					}else {
+						$nr = 0;
 						$result = $obj->getById($id);
-						$row = pg_fetch_assoc($result);
-						pg_free_result($result);
+						if($result){
+							$nr = pg_num_rows($result);
+							pg_free_result($result);
+						}
 						
-						if($obj->delete(intval($id))){
-							
-							App::uninstallApp($row['id'], DATA_DIR, APPS_DIR);
+						if($nr == 0){
+							$result = ['success' => false, 'message' => 'Error: Map doesn\'t exist!'];
+						}else if($obj->delete($id)){
+
+							uninstallApp($id, DATA_DIR, APPS_DIR);
 							
 							$result = ['success' => true, 'message' => 'Data Successfully Deleted!'];
 						}else{
@@ -232,7 +295,14 @@ function find_html_dir($unzip_dir, $name){
 					}else{
 						$result = ['success' => false, 'message' => 'Error: No cache!'];
 					}
+				} else if(isset($_POST['pages'])) {
+					$pg_res = $obj->getById($id);
+					$pgr = pg_fetch_assoc($pg_res);
+					pg_free_result($pg_res);
 					
+					$data_dir = DATA_DIR.'/'.$id;
+					
+					$result = ['success' => true, 'pages' => getPageFiles($data_dir)];
 				} else if(isset($_POST['features'])) {
 					
 					$html_dir = APPS_DIR.'/'.$id;

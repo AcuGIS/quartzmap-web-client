@@ -34,8 +34,9 @@
 						 }
 					
              $sql = "INSERT INTO PUBLIC." .$this->table_name."
-             (map_id,description,query,expires,visits_limit,hash,owner_id) "."VALUES('".
+             (map_id,page,description,query,expires,visits_limit,hash,owner_id) "."VALUES('".
 						 $this->cleanData($data['map_id'])."','".
+						 $this->cleanData($data['page'])."','".
 						 $this->cleanData($data['description'])."','".
 						 $this->cleanData($data['query'])."','".
 						 $row['expires']."','".
@@ -117,7 +118,8 @@
 					 }
 				 
           $sql = "update public.".$this->table_name." set description='".
-					$this->cleanData($data['description'])."', query='".
+					$this->cleanData($data['description'])."', page='".
+					$this->cleanData($data['page'])."', query='".
 					$this->cleanData($data['query'])."', expires='".
 					$this->cleanData($data['expires'])."', visits_limit='".
           $this->cleanData($data['visits_limit'])."' where id = '".intval($data['id'])."' ";
