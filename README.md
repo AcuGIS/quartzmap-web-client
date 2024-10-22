@@ -1,10 +1,12 @@
-# QuartzMap Web Client 2.1.0
+# QuartzMap Web Client
 
 [![Documentation Status](https://readthedocs.org/projects/quartzmap/badge/?version=latest)](https://quartzmap.docs.acugis.com/en/latest/?badge=latest)
 
+## Transform your qgis2web maps into secure, dyanmic maps.  
 
+QuartzMap allows you to transform your qgis2web maps into secure, dynamic maps.  
 
-## Transform your qgis2web maps into secure, dyanmic maps.
+QuartzMap now also includes support for R apps as well.
 
 ![QuartzMap](QuartzMap-Main.png)
 
@@ -25,9 +27,14 @@
 	- Multi-User Portal
  	- Optional self-registration
 	- Publish qgis2threejs (Static Only)
-
+	- R
+   
 ## Install
-Install on Ubuntu 22 or 24
+
+Requirements:
+Ubuntu 24
+2 GB RAM (4 GB RAM if installinf Demo Data)
+15 GB Disk
 
 Be sure to set the hostname prior to installation if you plan to provision SSL using certbot.
 
@@ -46,12 +53,7 @@ Optionally, provision and SSL certificate using:
  certbot --apache --agree-tos --email hostmaster@${HNAME} --no-eff-email -d ${HNAME}
 ```
 
-Note: If using git clone, you will need to make postgres.sh and app-install.sh executable:
-
-```bash
-chmod +x installer/postgres.sh
-chmod +x installer/app-install.sh
-```
+Note: If using git clone, you will need to make postgres.sh and app-install.sh executable.
  
 ## Documentation
 
