@@ -41,8 +41,8 @@ Be sure to set the hostname prior to installation if you plan to provision SSL u
 hostnamectl set-hostname qpod.webgis1.com
 
 ```bash
-$ unzip -q quartzmap-web-client-2.1.0.zip
-$ cd quartzmap-web-client-2.1.0
+$ unzip -q quartzmap-web-client-3.1.0.zip
+$ cd quartzmap-web-client-3.1.0
 $ ./installer/postgres.sh
 $ ./installer/app-install.sh
 ```
