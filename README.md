@@ -32,9 +32,9 @@ QuartzMap now also includes support for R apps as well.
 ## Install
 
 Requirements:
-Ubuntu 24
-2 GB RAM (4 GB RAM if installinf Demo Data)
-15 GB Disk
+- Ubuntu 24
+- 2 GB RAM (4 GB RAM if installing Demo Data)
+- 15 GB Disk
 
 Be sure to set the hostname prior to installation if you plan to provision SSL using certbot.
 
