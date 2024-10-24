@@ -29,16 +29,21 @@ QuartzMap now also includes support for R apps as well.
 	- Publish qgis2threejs (Static Only)
 	- R
    
-## Install
+## Requirements
 
-Requirements:
 - Ubuntu 24
 - 2 GB RAM (4 GB RAM if installing Demo Data)
 - 15 GB Disk
 
+## Install
+
 Be sure to set the hostname prior to installation if you plan to provision SSL using certbot.
 
-hostnamectl set-hostname qpod.webgis1.com
+```bash
+hostnamectl set-hostname <yourhostname>
+```
+
+Download quartzmap-web-client-3.1.0.zip
 
 ```bash
 $ unzip -q quartzmap-web-client-3.1.0.zip
@@ -53,7 +58,7 @@ Optionally, provision and SSL certificate using:
  certbot --apache --agree-tos --email hostmaster@${HNAME} --no-eff-email -d ${HNAME}
 ```
 
-Note: If using git clone, you will need to make postgres.sh and app-install.sh executable.
+Once installation completes, go to https://<yourdomain.com>/admin/setup.php to complete installation
  
 ## Documentation
 
