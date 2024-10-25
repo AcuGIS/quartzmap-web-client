@@ -376,6 +376,11 @@ class AppQ2W {
 			}else if(preg_match('/src="images\//', $line, $matches)){
 				$line = str_replace('images/', 'data_filep.php?f=images/', $line);
 				copy('../snippets/data_filep.php', $html_dir.'/data_filep.php');
+			
+			# var img_goodcog_1 = 'data_filep.php?f=goodcog_1.png';
+			}else if(preg_match('/= \'data\/(.*\.(png|jpeg,jpg))\';/', $line, $matches)){
+				$line = str_replace('data/', 'data_filep.php?f=', $line);
+				copy('../snippets/data_filep.php', $html_dir.'/data_filep.php');
 				
 			}else if(preg_match('/src="data\/(.*)"/', $line, $matches)){
 				$json_filename = $matches[1];
