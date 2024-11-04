@@ -10,7 +10,7 @@ require('class/app.php');
 
 function post_example($auth, $map){
 	$proto = (!empty($_SERVER['HTTPS'])) ? 'https' : 'http';
-	$post_url = $proto.'://'.$_SERVER['HTTP_HOST'].'/admin/action';
+	$post_url = $proto.'://'.$_SERVER['HTTP_HOST'].str_replace('setup.php', 'action', $_SERVER['PHP_SELF']);
 	$cookie = '/tmp/sample.cookie';
 	
 	// login
@@ -125,7 +125,7 @@ function load_simple_bee($database, $pgl){
 	
 	
 	$proto = (!empty($_SERVER['HTTPS'])) ? 'https' : 'http';
-	$post_url = $proto.'://'.$_SERVER['HTTP_HOST'].'/admin/action';
+	$post_url = $proto.'://'.$_SERVER['HTTP_HOST'].str_replace('setup.php', 'action', $_SERVER['PHP_SELF']);
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_POST, true);
